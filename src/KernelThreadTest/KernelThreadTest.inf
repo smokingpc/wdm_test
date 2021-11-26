@@ -1,0 +1,53 @@
+;
+; KernelThreadTest.inf
+;
+;
+; PerformanceCounterTest.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%ManufacturerName%
+DriverVer=
+CatalogFile=KernelThreadTest.cat
+PnpLockDown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+KernelThreadTest.sys = 1,,
+
+;[Manufacturer]
+;%ManufacturerName%=Standard,NT$ARCH$
+
+[DefaultInstall.NT$ARCH$]
+;%MyDeviceDesc%=Install,
+CopyFiles=DefaultInstall_CopyFiles
+
+[DefaultInstall_CopyFiles]
+KernelThreadTest.sys
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService = mywdm,2, MyKernelTest_Service
+
+; -------------- graiddriver driver install sections
+[MyKernelTest_Service]
+DisplayName    = %MyDeviceDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\KernelThreadTest.sys
+
+
+[Strings]
+ManufacturerName="Roy Wang" ;TODO: Replace with your manufacturer name
+ClassName=""
+DiskName="WDM Test Source Disk"
+MyDeviceDesc = "Test something in kernel"
