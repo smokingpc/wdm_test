@@ -11,7 +11,7 @@ Class=Sample
 ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
 Provider=%ManufacturerName%
 DriverVer=
-CatalogFile=KernelThreadTest.cat
+CatalogFile=PtovTest.cat
 PnpLockDown=1
 
 [DestinationDirs]
