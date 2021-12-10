@@ -24,7 +24,7 @@
     </Inf>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\HiResTimerTest\DriverEntry.c">
+    <ClCompile Include="DriverEntry.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

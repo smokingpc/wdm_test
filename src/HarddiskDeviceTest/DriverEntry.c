@@ -1,6 +1,7 @@
 #include <wdm.h>
 #include <ntstrsafe.h>
-#define DEVPATH L"\\Device\\0000006b"
+//#define DEVPATH L"\\Device\\0000006b"
+#define DEVPATH L"\\Device\\Harddisk1\\DR1"
 #define POOLTAG 'YOR'
 
 KEVENT IoEvent;
@@ -52,11 +53,22 @@ void DoTest()
 
     KeInitializeEvent(&IoEvent, NotificationEvent, FALSE);
     RtlInitUnicodeString(&objname, DEVPATH);
-
+    
+    OBJECT_ATTRIBUTES attr = {0};
+    InitializeObjectAttributes(&attr,
+        &objname,
+        OBJ_CASE_INSENSITIVE,
+        NULL,
+        NULL);
     NTSTATUS status = IoGetDeviceObjectPointer(&objname, FILE_ALL_ACCESS, &pFileObj, &pDevObj);
+    //HANDLE file = 0;
+    //IO_STATUS_BLOCK IoStatus = {0};
+    //NTSTATUS status = ZwCreateFile(&file, FILE_ALL_ACCESS, &attr, &IoStatus, NULL, FILE_ATTRIBUTE_NORMAL, 0, FILE_OPEN, FILE_SYNCHRONOUS_IO_NONALERT, NULL, 0);
 
+    DbgBreakPoint();
     if (NT_SUCCESS(status))
     {
+        DbgBreakPoint();
         pIrp = IoAllocateIrp(pDevObj->StackSize, FALSE);
         buffer = ExAllocatePoolWithTag(NonPagedPool, size, POOLTAG);
         mdl = IoAllocateMdl(buffer, size, FALSE, FALSE, pIrp);
