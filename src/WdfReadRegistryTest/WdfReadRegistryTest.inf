@@ -1,0 +1,86 @@
+;
+; WdfReadRegistryTest.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample ; TODO: edit Class
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=WdfReadRegistryTest.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+
+[DestinationDirs]
+DefaultDestDir = 12
+WdfReadRegistryTest_Device_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+WdfReadRegistryTest.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%WdfReadRegistryTest.DeviceDesc%=WdfReadRegistryTest_Device, Root\WdfReadRegistryTest ; TODO: edit hw-id
+
+[WdfReadRegistryTest_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+WdfReadRegistryTest.sys
+
+;-------------- Service installation
+[WdfReadRegistryTest_Device.NT.Services]
+AddService = WdfReadRegistryTest,%SPSVCINST_ASSOCSERVICE%, WdfReadRegistryTest_Service_Inst
+
+; -------------- WdfReadRegistryTest driver install sections
+[WdfReadRegistryTest_Service_Inst]
+DisplayName    = %WdfReadRegistryTest.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\WdfReadRegistryTest.sys
+Addreg=SampleRegistry
+
+[SampleRegistry]
+HKR, Parameters\Device, TEST1, %REG_DWORD%, 12345678 
+HKR, Parameters, TEST2, %REG_EXPAND_SZ%, "TestString" 
+
+;
+;--- WdfReadRegistryTest_Device Coinstaller installation ------
+;
+
+[WdfReadRegistryTest_Device.NT.CoInstallers]
+AddReg=WdfReadRegistryTest_Device_CoInstaller_AddReg
+CopyFiles=WdfReadRegistryTest_Device_CoInstaller_CopyFiles
+
+[WdfReadRegistryTest_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[WdfReadRegistryTest_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[WdfReadRegistryTest_Device.NT.Wdf]
+KmdfService =  WdfReadRegistryTest, WdfReadRegistryTest_wdfsect
+[WdfReadRegistryTest_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="Samples" ; TODO: edit ClassName
+DiskName = "WdfReadRegistryTest Installation Disk"
+WdfReadRegistryTest.DeviceDesc = "WdfReadRegistryTest Device"
+WdfReadRegistryTest.SVCDESC = "WdfReadRegistryTest Service"
+REG_DWORD      = 0x00010001
+REG_EXPAND_SZ  = 0X00020000
