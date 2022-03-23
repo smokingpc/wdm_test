@@ -17,7 +17,7 @@ typedef struct _NVMe_SMART_INFO{
         UCHAR AsByte;
     }CriticalWarn;
 
-    UCHAR OverallTemperature[2];    //Composite Temperature
+    USHORT OverallTemperature;      //Composite Temperature
     UCHAR AvailableSpare;           //Contains a normalized percentage (0 to 100%) of the remaining spare capacity available
     UCHAR AvailableSpareThreshold;  //low limit of available spare in percentage (%)
     UCHAR PercentageUsed;           //life used(in %) of NVME subsystem. refer to JEDEC JESD218A. allow to exceed 100
