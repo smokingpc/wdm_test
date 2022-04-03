@@ -37,6 +37,8 @@ void ListBindedDriverList(wstring devpath)
     DWORD need_size;
     int err = 0;
     bool graid_binded;
+    DEVPROPTYPE PropType = 0;
+    WCHAR Buffer[4096] = { 0 };
 
     infoset = SetupDiCreateDeviceInfoList(NULL, NULL);
     if (INVALID_HANDLE_VALUE == infoset) {
@@ -55,17 +57,14 @@ void ListBindedDriverList(wstring devpath)
     ZeroMemory(&infodata, sizeof(SP_DEVINFO_DATA));
     infodata.cbSize = sizeof(SP_DEVINFO_DATA);
 
-    //if (!SetupDiGetDeviceInterfaceDetail(infoset, &devif, NULL, 0, &need_size, &infodata)) {
-    //    error = GetLastError();
-    //    if (error != ERROR_INSUFFICIENT_BUFFER) {
-    //        goto out;
-    //    }
-    //}
+    if (!SetupDiGetDeviceInterfaceDetail(infoset, &devif, NULL, 0, &need_size, &infodata)) {
+        error = GetLastError();
+        if (error != ERROR_INSUFFICIENT_BUFFER) {
+            goto out;
+        }
+    }
 
-    //SetupDiDeleteInterfaceDeviceData(infoset, &devif);
-
-    DEVPROPTYPE PropType;
-    WCHAR Buffer[4096];
+    SetupDiDeleteInterfaceDeviceData(infoset, &devif);
 
     if (!SetupDiGetDeviceProperty(
         infoset,
@@ -79,8 +78,6 @@ void ListBindedDriverList(wstring devpath)
         error = GetLastError();
         goto out;
     }
-
-    //graid_binded = (lstrcmpi(Buffer, graid_driver_desc) == 0);
 
     if (!SetupDiBuildDriverInfoList(infoset, &infodata, SPDIT_COMPATDRIVER)) {
         error = GetLastError();
@@ -100,14 +97,10 @@ void ListBindedDriverList(wstring devpath)
         wprintf(L"  Type=%d, DriverVersion=%lld, DriverDate=%d-%d-%d %d:%d:%d\n", drvinfo.DriverType, drvinfo.DriverVersion, 
                     systime.wYear, systime.wMonth, systime.wDay, systime.wHour, systime.wMinute, systime.wSecond);
         wprintf(L"  MfgName=%s, ProviderName=%s\n", drvinfo.MfgName, drvinfo.ProviderName);
-        wprintf(L"  %s\n", drvinfo.Description);
-        wprintf(L"  %s\n", drvinfo.Description);
-        wprintf(L"  %s\n", drvinfo.Description);
-        //FILETIME  DriverDate;
-        //DWORDLONG DriverVersion;
     }
     SetupDiDestroyDriverInfoList(infoset, &infodata, SPDIT_COMPATDRIVER);
-
+    SetupDiDeleteDeviceInterfaceData(infoset, &devif);
+    error = 0;
 out:
     if(error != 0)
         wprintf(L"error occurred, LastError=%d\n", error);
@@ -116,6 +109,48 @@ out:
     return;
 }
 
+BOOLEAN ListStorportAdapters(list<wstring> &result)
+{
+    HDEVINFO devinfo = NULL;
+    GUID disk_class_guid = GUID_DEVINTERFACE_STORAGEPORT;
+
+    devinfo = SetupDiGetClassDevs(&disk_class_guid, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+    if (INVALID_HANDLE_VALUE != devinfo)
+    {
+        SP_DEVICE_INTERFACE_DATA ifdata = { 0 };
+        ifdata.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
+        DWORD devid = 0;
+        while (TRUE == SetupDiEnumDeviceInterfaces(devinfo, NULL, &disk_class_guid, devid, &ifdata))
+        {
+            DWORD need_size = 0;
+            DWORD return_size = 0;
+            BOOL ok = FALSE;
+            PSP_DEVICE_INTERFACE_DETAIL_DATA ifdetail = NULL;
+            devid++;
+            SetupDiGetDeviceInterfaceDetail(devinfo, &ifdata, NULL, 0, &need_size, NULL);
+            need_size = need_size * 2;
+            BYTE buffer[1024] = { 0 };
+
+            ifdetail = (PSP_DEVICE_INTERFACE_DETAIL_DATA)buffer;
+            ifdetail->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
+            ok = SetupDiGetDeviceInterfaceDetail(devinfo, &ifdata, ifdetail, need_size, &need_size, NULL);
+            if (TRUE == ok)
+            {
+                HANDLE device = CreateFile(ifdetail->DevicePath, GENERIC_READ | GENERIC_WRITE,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+                if (INVALID_HANDLE_VALUE != device)
+                {
+                    result.push_back(ifdetail->DevicePath);
+                    CloseHandle(device);
+                }
+            }
+        }
+    }
+
+    if (result.size() > 0)
+        return TRUE;
+    return FALSE;
+}
 
 void ShowUsage()
 {
@@ -124,13 +159,9 @@ void ShowUsage()
 
 int main(wchar_t *argv[], int argc)
 {
-    if(argc<2)
-    {
-        ShowUsage();
-        return -1;
-    }
-
-    wstring devpath = argv[1];
-    ListBindedDriverList(devpath);
+    list<wstring> devlist;
+    ListStorportAdapters(devlist);
+    for(const auto& devpath : devlist)
+        ListBindedDriverList(devpath);
 }
 
