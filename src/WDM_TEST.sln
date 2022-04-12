@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuerySmartInfoFromAdapter",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DriverBindingTest", "DriverBindingTest\DriverBindingTest.vcxproj", "{3BCAA2F2-9180-4213-A6CE-36910DA51CE9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoctlDiskPerfOnOff", "IoctlDiskPerfOnOff\IoctlDiskPerfOnOff.vcxproj", "{1C80E06C-5BA9-49C2-8857-527FF5331F39}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -229,6 +231,18 @@ Global
 		{3BCAA2F2-9180-4213-A6CE-36910DA51CE9}.Release|x64.Build.0 = Release|x64
 		{3BCAA2F2-9180-4213-A6CE-36910DA51CE9}.Release|x86.ActiveCfg = Release|Win32
 		{3BCAA2F2-9180-4213-A6CE-36910DA51CE9}.Release|x86.Build.0 = Release|Win32
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Debug|ARM.ActiveCfg = Debug|Win32
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Debug|ARM64.ActiveCfg = Debug|Win32
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Debug|x64.ActiveCfg = Debug|x64
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Debug|x64.Build.0 = Debug|x64
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Debug|x86.ActiveCfg = Debug|Win32
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Debug|x86.Build.0 = Debug|Win32
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Release|ARM.ActiveCfg = Release|Win32
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Release|ARM64.ActiveCfg = Release|Win32
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Release|x64.ActiveCfg = Release|x64
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Release|x64.Build.0 = Release|x64
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Release|x86.ActiveCfg = Release|Win32
+		{1C80E06C-5BA9-49C2-8857-527FF5331F39}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
