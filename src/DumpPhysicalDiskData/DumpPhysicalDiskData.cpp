@@ -9,7 +9,7 @@
 void Usage()
 {
     printf("Usage: DumpPhysicalDiskData.exe [physical_drive_devpath] [dump_size_in_MB] [output_file_fullpath]\n");
-    printf("e.g.: If you want to dump first 3MB of physical disk 1 to c:\output\dumpdata.bin ,\n");
+    printf("e.g.: If you want to dump first 3MB of physical disk 1 to c:\\test\\dumpdata.bin ,\n");
     printf("      you should use command: DumpPhysicalDiskData.exe \\\\.\\PhysicalDrive1 3 c:\\test\\dumpdata.bin \n\n");
 }
 

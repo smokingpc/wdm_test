@@ -13,8 +13,9 @@ int main()
 {
     HDEVINFO devinfo = NULL;
     GUID disk_class_guid = GUID_DEVINTERFACE_DISK;
-
+    GUID * debug = &disk_class_guid;
     devinfo = SetupDiGetClassDevs(&disk_class_guid, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+
     if(INVALID_HANDLE_VALUE != devinfo)
     {
         SP_DEVICE_INTERFACE_DATA ifdata = {0};

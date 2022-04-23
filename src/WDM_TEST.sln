@@ -33,6 +33,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IoctlDiskPerfOnOff", "Ioctl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DumpPhysicalDiskData", "DumpPhysicalDiskData\DumpPhysicalDiskData.vcxproj", "{6AED6463-7D1D-4AC1-BE63-49030AD7664B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WriteDataToPhysicalDisk", "WriteDataToPhysicalDisk\WriteDataToPhysicalDisk.vcxproj", "{B806CF80-513C-40DA-9352-3316A9BE5FB1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -257,6 +259,18 @@ Global
 		{6AED6463-7D1D-4AC1-BE63-49030AD7664B}.Release|x64.Build.0 = Release|x64
 		{6AED6463-7D1D-4AC1-BE63-49030AD7664B}.Release|x86.ActiveCfg = Release|Win32
 		{6AED6463-7D1D-4AC1-BE63-49030AD7664B}.Release|x86.Build.0 = Release|Win32
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Debug|ARM.ActiveCfg = Debug|Win32
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Debug|ARM64.ActiveCfg = Debug|Win32
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Debug|x64.ActiveCfg = Debug|x64
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Debug|x64.Build.0 = Debug|x64
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Debug|x86.ActiveCfg = Debug|Win32
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Debug|x86.Build.0 = Debug|Win32
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Release|ARM.ActiveCfg = Release|Win32
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Release|ARM64.ActiveCfg = Release|Win32
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Release|x64.ActiveCfg = Release|x64
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Release|x64.Build.0 = Release|x64
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Release|x86.ActiveCfg = Release|Win32
+		{B806CF80-513C-40DA-9352-3316A9BE5FB1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
