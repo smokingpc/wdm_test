@@ -88,7 +88,8 @@ int main()
 {
     list<wstring> list;
     size_t count = EnumerateDeviceInterface(list, &GUID_TEST_GUID);
-
+    //size_t count = EnumerateDeviceInterface(list, &GUID_DEVINTERFACE_DISK);
+    
     if(0==count)
     {
         wprintf(L"no interface found, exit...\n\n");

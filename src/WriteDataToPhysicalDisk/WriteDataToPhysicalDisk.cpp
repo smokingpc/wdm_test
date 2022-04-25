@@ -29,9 +29,11 @@ void WriteDataToPhysicalDisk(char* disk_devpath, char* src_file)
             {
                 DWORD written_size = 0;
 
-                BOOL ok = WriteFile(file, buffer, ret_size, &written_size, NULL);
+                BOOL ok = WriteFile(disk, buffer, ret_size, &written_size, NULL);
                 if(!ok || 0 == written_size)
                     break;
+                else
+                    printf("Wrote data block (%d)Bytes\n", written_size);
                 memset(buffer, 0, SIZE_1MB);
             }
 
@@ -58,5 +60,5 @@ int main(int argc, char* argv[])
     //devpath is physical disk symbolic link name, e.g. "\\.\PhysicalDrive4"
     char* filepath = argv[1];
     char* devpath = argv[2];
-    WriteDataToPhysicalDisk(filepath, devpath);
+    WriteDataToPhysicalDisk(devpath, filepath);
 }

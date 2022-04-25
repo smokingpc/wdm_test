@@ -30,11 +30,16 @@ void DumpDataFromPhysicalDisk(char *disk_devpath, int size_in_mb, char *output_f
                 memset(buffer, 0, SIZE_1MB);
                 BOOL ok = ReadFile(disk, buffer, SIZE_1MB, &ret_size, NULL);
                 if(!ok || 0 == ret_size)
+                {
+                    printf("Read disk failed, LastError=%d\n", GetLastError());
                     break;
-
+                }
                 ok = WriteFile(file, buffer, ret_size, &written_size, NULL);
                 if(!ok)
+                {
+                    printf("Write to file failed, LastError=%d\n", GetLastError());
                     break;
+                }
 
                 counter++;
             }
