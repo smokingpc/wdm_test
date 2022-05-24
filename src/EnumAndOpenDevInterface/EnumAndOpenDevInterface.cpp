@@ -7,7 +7,7 @@
 #include <string>
 #include <list>
 using namespace std;
-
+//it can be device interface class guid of WdfDeviceCreateDeviceInterface()
 DEFINE_GUID(GUID_TEST_GUID,
     0x952826e2, 0xf467, 0x4f78, 0xbb, 0x22, 0xa3, 0xef, 0xc8, 0x6c, 0x4a, 0x1d);
 // {952826e2-f467-4f78-bb22-a3efc86c4a1d}
@@ -33,6 +33,7 @@ size_t EnumerateDeviceInterface(list<wstring> &result, const GUID* class_guid)
     {
         ZeroMemory(&ifdata, sizeof(SP_DEVICE_INTERFACE_DATA));
         ifdata.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
+        wprintf(L"[Enum Next DeviceInterface]\n");
 
         if (!SetupDiEnumDeviceInterfaces(infoset, &infodata, class_guid, 0, &ifdata)) 
         {
@@ -42,8 +43,8 @@ size_t EnumerateDeviceInterface(list<wstring> &result, const GUID* class_guid)
 
         if ((ifdata.Flags & SPINT_ACTIVE) == 0) 
         {
-            wprintf(L"Got interface[0] but inactive, try next device...\n");
-            continue;
+            wprintf(L"Got interface[0] but inactive => Flag=0x%08X", ifdata.Flags);
+            //continue;
         }
 
         PSP_DEVICE_INTERFACE_DETAIL_DATA detail;
@@ -63,7 +64,7 @@ size_t EnumerateDeviceInterface(list<wstring> &result, const GUID* class_guid)
             wprintf(L"Allocate Buffer Failed, try next device...\n");
             continue;
         }
-        wprintf(L"required buffer size = %d\n", need_size);
+        //wprintf(L"required buffer size = %d\n", need_size);
 
         ZeroMemory(detail, need_size);
         detail->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
@@ -87,9 +88,9 @@ size_t EnumerateDeviceInterface(list<wstring> &result, const GUID* class_guid)
 int main()
 {
     list<wstring> list;
-    size_t count = EnumerateDeviceInterface(list, &GUID_TEST_GUID);
+    //size_t count = EnumerateDeviceInterface(list, &GUID_TEST_GUID);
     //size_t count = EnumerateDeviceInterface(list, &GUID_DEVINTERFACE_DISK);
-    
+    size_t count = EnumerateDeviceInterface(list, &GUID_DEVINTERFACE_STORAGEPORT);
     if(0==count)
     {
         wprintf(L"no interface found, exit...\n\n");
