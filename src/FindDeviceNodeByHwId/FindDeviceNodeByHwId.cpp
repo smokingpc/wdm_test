@@ -9,15 +9,30 @@
 #include <devpropdef.h>
 #include <string>
 #include <list>
+#include <algorithm>
 #include "DevicePropertyData.h"
 
 #pragma comment( lib, "setupapi.lib" )
+
+typedef struct _CMD_OPTION
+{
+    tstring Enumerator = _T("");
+    tstring Keyword = _T("");
+}CMD_OPTION, *PCMD_OPTION;
+
 
 #define BIG_BUFFER_SIZE     4096
 #define SMALL_BUFFER_SIZE   256
 #define FORMAT_16_BYTES     _T("%02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X")
 #define FORMAT_SYSTEMTIME   _T("%04d/%02d/%02d %02d:%02d:%02d.%03d")
 using namespace std;
+
+TCHAR tcslower(TCHAR in)
+{
+    if(in <= _T('Z') && in >= _T('A'))
+        return in - (_T('Z') - _T('z'));
+    return in;
+}
 
 __inline void ParsePropertyToString(BYTE *data, DEVPROPTYPE type, tstring& result)
 {
@@ -154,7 +169,6 @@ __inline void ParsePropertyToString(BYTE *data, DEVPROPTYPE type, tstring& resul
     }
 
 }
-
 __inline void GetDevicePropertry(HDEVINFO infoset, PSP_DEVINFO_DATA infodata, 
                     CONST DEVPROPKEY* key, DEVPROPTYPE type, tstring &result)
 {
@@ -168,12 +182,23 @@ __inline void GetDevicePropertry(HDEVINFO infoset, PSP_DEVINFO_DATA infodata,
     ParsePropertyToString(buffer, type, result);
 }
 
-size_t EnumerateDevices(list<DEVICE_PROPERTY_INFO> &result)
+__inline void PrintDevicePropertyInfo(DEVICE_PROPERTY_INFO &info)
+{
+    _tprintf(_T("Found device:\n"));
+    _tprintf(_T("\tDeviceDescription: %s\n"), info.DeviceDescription.c_str());
+    _tprintf(_T("\tDriverDescription: %s\n"), info.DriverDescription.c_str());
+    _tprintf(_T("\tHardwareId: %s\n"), info.HardwareId.c_str());
+    _tprintf(_T("\tDriverVersion: %s\n"), info.DriverVersion.c_str());
+    _tprintf(_T("\tInfName: %s\n"), info.InfName.c_str());
+}
+
+size_t EnumerateDevices(list<DEVICE_PROPERTY_INFO> &result, tstring &enumerator)
 {
     HDEVINFO infoset;
+    const TCHAR *enum_str = (enumerator.size() == 0) ? NULL : enumerator.c_str();
     infoset = SetupDiGetClassDevs(
         NULL,
-        _T("ROOT"),
+        enum_str,
         NULL,
         DIGCF_PRESENT | DIGCF_ALLCLASSES);
     if(INVALID_HANDLE_VALUE != infoset)
@@ -215,31 +240,74 @@ size_t EnumerateDevices(list<DEVICE_PROPERTY_INFO> &result)
     return result.size();
 }
 
+
 void Usage()
-{}
+{
+    _tprintf(_T("Usage: FindDeviceNodeByHwId.exe [desired HwID|*]\n"));
+    _tprintf(_T("       [desired HwID] is the HardwareID you want to find.\n"));
+    _tprintf(_T("example: FindDeviceNodeByHwId.exe ROOT\\* => to find all device under ROOT\n"));
+    _tprintf(_T("         FindDeviceNodeByHwId.exe * => get all devices in system\n"));
+    _tprintf(_T("         FindDeviceNodeByHwId.exe * => get all devices in system\n"));
+    _tprintf(_T("\n"));
+}
+
+BOOL ParseArgs(CMD_OPTION &option, int argc, _TCHAR* argv[])
+{
+    if(argc < 2)
+        return FALSE;
+
+    tstring arg1 = argv[1];
+    size_t offset = 0;
+    size_t found = arg1.find(_T('\\'), offset);
+    size_t count = 0;
+
+    if(found == tstring::npos)
+        option.Enumerator = arg1;
+    else
+    {
+        count = found - offset;
+        option.Enumerator = arg1.substr(offset, count);
+        count = arg1.size() - found;
+        offset = found+1;
+        option.Keyword = arg1.substr(offset, found - offset);
+    }
+    
+    tstring::iterator iter_end = option.Enumerator.end()-1;
+    if(*iter_end == _T('*'))
+        option.Enumerator.pop_back();
+    iter_end = option.Keyword.end()-1;
+    if (*iter_end == _T('*'))
+        option.Keyword.pop_back();
+    std::transform(option.Keyword.begin(), option.Keyword.end(), option.Keyword.begin(), tcslower);
+
+    return TRUE;
+}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    if(argc < 2)
+    CMD_OPTION option;
+
+    if(!ParseArgs(option, argc, argv))
     {
         Usage();
         return -1;
     }
-    TCHAR *target_hwid = argv[1];
 
     list<DEVICE_PROPERTY_INFO> result;
-    size_t count = EnumerateDevices(result);
+    size_t count = EnumerateDevices(result, option.Enumerator);
+    size_t compare_len = option.Keyword.size();
+    size_t compare_off = option.Enumerator.size();
+    if(compare_off > 0)//add '\\' length
+        compare_off++;
 
     if(count > 0)
     {
         for(auto &item : result)
         {
-            _tprintf(_T("Found device:\n"));
-            _tprintf(_T("\t%s:\n"), item.DeviceDescription.c_str());
-            _tprintf(_T("\t%s:\n"), item.DriverDescription.c_str());
-            _tprintf(_T("\t%s:\n"), item.HardwareId.c_str());
-            _tprintf(_T("\t%s:\n"), item.DriverVersion.c_str());
-            _tprintf(_T("\t%s:\n"), item.InfName.c_str());
+            tstring temp = item.HardwareId;
+            std::transform(temp.begin(), temp.end(), temp.begin(), tcslower);
+            if(compare_len == 0 || 0 == temp.compare(compare_off, compare_len, option.Keyword, 0, compare_len))
+                PrintDevicePropertyInfo(item);
         }
     }
 }
