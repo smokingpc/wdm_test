@@ -32,7 +32,7 @@ __inline BOOL DeviceIoStandardStorageQuery(HANDLE disk, STORAGE_PROPERTY_ID prop
     return ok;
 }
 
-__inline BOOL DeviceIoQuery(HANDLE disk,DWORD ioctl_code , PVOID in_buf, DWORD in_buf_size, 
+__inline BOOL DoDeviceIoControl(HANDLE disk,DWORD ioctl_code , PVOID in_buf, DWORD in_buf_size, 
                             PVOID out_buf, DWORD out_buf_size, DWORD* ret_size)
 {
     BOOL ok = DeviceIoControl(
@@ -136,7 +136,7 @@ void QueryDiskGeometry(HANDLE disk)
     UCHAR out_buffer[BUFFER_SIZE] = { 0 };
     DWORD ret_size = 0;
 
-    BOOL ok = DeviceIoQuery(disk, IOCTL_DISK_GET_DRIVE_GEOMETRY , 
+    BOOL ok = DoDeviceIoControl(disk, IOCTL_DISK_GET_DRIVE_GEOMETRY , 
                     NULL, 0, out_buffer, _countof(out_buffer), &ret_size);
     if (!ok)
     {
@@ -159,7 +159,7 @@ void QueryDiskCapacity(HANDLE disk)
     UCHAR out_buffer[BUFFER_SIZE] = { 0 };
     DWORD ret_size = 0;
 
-    BOOL ok = DeviceIoQuery(disk, IOCTL_STORAGE_READ_CAPACITY,
+    BOOL ok = DoDeviceIoControl(disk, IOCTL_STORAGE_READ_CAPACITY,
         NULL, 0, out_buffer, _countof(out_buffer), &ret_size);
     if (!ok)
     {
