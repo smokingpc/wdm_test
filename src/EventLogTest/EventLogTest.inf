@@ -1,0 +1,89 @@
+;
+; EventLogTest.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+;Class=Sample ; TODO: edit Class
+;ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Class = System
+ClassGuid = {4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+CatalogFile=EventLogTest.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 13
+EventLogTest_Device_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+;[ClassInstall32]
+;Addreg=SampleClassReg
+
+;[SampleClassReg]
+;HKR,,,0,%ClassName%
+;HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+EventLogTest.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%EventLogTest.DeviceDesc%=EventLogTest_Device, Root\EventLogTest ; TODO: edit hw-id
+
+[EventLogTest_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+EventLogTest.sys
+
+;-------------- Service installation
+[EventLogTest_Device.NT.Services]
+AddService = EventLogTest,%SPSVCINST_ASSOCSERVICE%, EventLogTest_Service_Inst
+
+; -------------- EventLogTest driver install sections
+[EventLogTest_Service_Inst]
+DisplayName    = %EventLogTest.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 1               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\EventLogTest.sys
+
+;
+;--- EventLogTest_Device Coinstaller installation ------
+;
+
+[EventLogTest_Device.NT.CoInstallers]
+AddReg=EventLogTest_Device_CoInstaller_AddReg
+CopyFiles=EventLogTest_Device_CoInstaller_CopyFiles
+
+[EventLogTest_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[EventLogTest_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[EventLogTest_Device.NT.Wdf]
+KmdfService =  EventLogTest, EventLogTest_wdfsect
+[EventLogTest_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="Roy Wang" ;TODO: Replace with your manufacturer name
+ClassName="EventLogTest" ; TODO: edit ClassName
+DiskName = "EventLogTest Installation Disk"
+EventLogTest.DeviceDesc = "EventLogTest Device"
+EventLogTest.SVCDESC = "EventLogTest Service"
