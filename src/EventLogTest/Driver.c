@@ -17,6 +17,7 @@ Environment:
 #include "driver.h"
 #include <evntrace.h>
 #include "driver.tmh"
+#include "TestEventLog.h"
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (INIT, DriverEntry)
@@ -83,16 +84,20 @@ Return Value:
                              &config,
                              WDF_NO_HANDLE
                              );
-    DbgBreakPoint();
+
     if (!NT_SUCCESS(status)) {
         TraceEvents(TRACE_LEVEL_ERROR, TRACE_DRIVER, "WdfDriverCreate failed %!STATUS!", status);
         WPP_CLEANUP(DriverObject);
         return status;
     }
 
-    TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
+    TraceEvents(TRACE_LEVEL_VERBOSE, TRACE_DRIVER, "%!FUNC! Exit1");
+    TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit2");
+    TraceEvents(TRACE_LEVEL_WARNING, TRACE_DRIVER, "%!FUNC! Exit3");
+    TraceEvents(TRACE_LEVEL_ERROR, TRACE_DRIVER, "%!FUNC! Exit4");
+    TraceEvents(TRACE_LEVEL_FATAL, TRACE_DRIVER, "%!FUNC! Exit5");
 
-    return status;
+    return TestEventLog3();
 }
 
 NTSTATUS

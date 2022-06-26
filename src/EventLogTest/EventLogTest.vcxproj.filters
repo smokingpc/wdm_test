@@ -17,9 +17,24 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
+    <Filter Include="WPP_FakeFiles">
+      <UniqueIdentifier>{de1e2b1b-b012-4016-942a-f28e136ba761}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="WPP_FakeFiles\Device.tmh">
+      <Filter>WPP_FakeFiles</Filter>
+    </None>
+    <None Include="WPP_FakeFiles\Driver.tmh">
+      <Filter>WPP_FakeFiles</Filter>
+    </None>
+    <None Include="WPP_FakeFiles\Queue.tmh">
+      <Filter>WPP_FakeFiles</Filter>
+    </None>
+    <None Include="WPP_FakeFiles\TestEventLog.tmh">
+      <Filter>WPP_FakeFiles</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Inf Include="EventLogTest.inf">
@@ -42,6 +57,9 @@
     <ClInclude Include="Trace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestEventLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.c">
@@ -50,7 +68,10 @@
     <ClCompile Include="Driver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-   <ClCompile Include="Queue.c">
+    <ClCompile Include="Queue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestEventLog.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
