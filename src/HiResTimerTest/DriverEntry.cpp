@@ -15,7 +15,7 @@ void ExtCallback(PEX_TIMER Timer, PVOID Context)
     LARGE_INTEGER freq = { 0 };
     LARGE_INTEGER timestamp = KeQueryPerformanceCounter(&freq);
     CHAR* buffer = (CHAR*)Context;
-    RtlStringCbPrintfA(temp, TINYBUF_SIZE, "[counter] %lld\n", timestamp.QuadPart);
+    RtlStringCbPrintfA(temp, TINYBUF_SIZE, "%lld, ", timestamp.QuadPart);
     RtlStringCbCatA(buffer, LOG_SIZE, temp);
 }
 
@@ -31,9 +31,8 @@ DriverEntry(
     UNREFERENCED_PARAMETER(DriverObject);
     UNREFERENCED_PARAMETER(RegistryPath);
 
-    DbgBreakPoint();
-
     LogData = (CHAR *)ExAllocatePoolWithTag(NonPagedPool, LOG_SIZE, TAG_LOG);
+    RtlZeroMemory(LogData, LOG_SIZE);
     TimerHandle1 = ExAllocateTimer(ExtCallback, LogData, EX_TIMER_HIGH_RESOLUTION);
 
     if(NULL != TimerHandle1)
@@ -48,7 +47,6 @@ DriverEntry(
         ExSetTimer(TimerHandle1, -10*100, 10*100, &param);
     }
 
-    DbgBreakPoint();
     LARGE_INTEGER interval = {0};
     interval.QuadPart = -10*1000*1000*30;        //30 seconds.
     KeDelayExecutionThread(KernelMode, FALSE, &interval);
