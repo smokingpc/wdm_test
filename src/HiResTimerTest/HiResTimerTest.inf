@@ -12,7 +12,7 @@ CatalogFile=MultiTimerTest.cat
 PnpLockDown=1
 
 [DestinationDirs]
-DefaultDestDir = 12
+DefaultDestDir = 13
 
 
 [SourceDisksNames]
@@ -41,7 +41,7 @@ DisplayName    = %MyDeviceDesc%
 ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
 StartType      = 3               ; SERVICE_DEMAND_START
 ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
-ServiceBinary  = %12%\HiResTimerTest.sys
+ServiceBinary  = %13%\HiResTimerTest.sys
 
 
 [Strings]
