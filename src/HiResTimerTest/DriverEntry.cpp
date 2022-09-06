@@ -34,20 +34,23 @@ DriverEntry(
     DbgBreakPoint();
 
     LogData = (CHAR *)ExAllocatePoolWithTag(NonPagedPool, LOG_SIZE, TAG_LOG);
-    TimerHandle1 = ExAllocateTimer(ExtCallback, NULL, EX_TIMER_HIGH_RESOLUTION);
+    TimerHandle1 = ExAllocateTimer(ExtCallback, LogData, EX_TIMER_HIGH_RESOLUTION);
 
     if(NULL != TimerHandle1)
     {
         EXT_SET_PARAMETERS param = {0};
         ExInitializeSetTimerParameters(&param);
+
+        //indicates CPU should wakeup immediately even got timer in low power state.
         param.NoWakeTolerance = 0;
+
         //set timer due time 100us and period 100us loop.
-        ExSetTimer(TimerHandle1, 10*100, 10*100, &param);
+        ExSetTimer(TimerHandle1, -10*100, 10*100, &param);
     }
 
     DbgBreakPoint();
     LARGE_INTEGER interval = {0};
-    interval.QuadPart = 10*1000*1000*30;        //30 seconds.
+    interval.QuadPart = -10*1000*1000*30;        //30 seconds.
     KeDelayExecutionThread(KernelMode, FALSE, &interval);
     DbgBreakPoint();
 

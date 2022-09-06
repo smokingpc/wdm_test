@@ -8,7 +8,7 @@ Class=System
 ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
 Provider=%ManufacturerName%
 DriverVer=1.0.0.1
-CatalogFile=MultiTimerTest.cat
+CatalogFile=HiResTimerTest.cat
 PnpLockDown=1
 
 [DestinationDirs]
@@ -33,7 +33,7 @@ CopyFiles=DefaultInstall_CopyFiles
 HiResTimerTest.sys
 
 [DefaultInstall.NT$ARCH$.Services]
-AddService = mywdm,2, MyKernelTest_Service
+AddService = mywdm, 2, MyKernelTest_Service
 
 ; -------------- graiddriver driver install sections
 [MyKernelTest_Service]
@@ -47,5 +47,5 @@ ServiceBinary  = %13%\HiResTimerTest.sys
 [Strings]
 ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
 ClassName=""
-DiskName="MultiTimerTest Source Disk"
+DiskName="HiResTimerTest Source Disk"
 MyDeviceDesc = "Test something in kernel"
