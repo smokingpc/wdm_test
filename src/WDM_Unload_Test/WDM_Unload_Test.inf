@@ -1,0 +1,46 @@
+;
+; WDM_Unload_Test.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+DriverVer=
+CatalogFile=WDM_Unload_Test.cat
+PnpLockDown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+WDM_Unload_Test.sys = 1,,
+
+[DefaultInstall.NT$ARCH$]
+CopyFiles=DefaultInstall_CopyFiles
+
+[DefaultInstall_CopyFiles]
+WDM_Unload_Test.sys
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService = mywdm, 2, MyKernelTest_Service
+
+; -------------- graiddriver driver install sections
+[MyKernelTest_Service]
+DisplayName    = %MyDeviceDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\WDM_Unload_Test.sys
+
+
+[Strings]
+ManufacturerName="<Roy Wang>" ;TODO: Replace with your manufacturer name
+ClassName=""
+DiskName="WDM_Unload_Test Source Disk"
+MyDeviceDesc = "Test something in kernel"
