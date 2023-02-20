@@ -11,6 +11,8 @@ NTSTATUS __stdcall DriverEntry(
     //UNREFERENCED_PARAMETER(DriverObject);
     UNREFERENCED_PARAMETER(RegistryPath);
 
+    DriverObject->DriverUnload = DriverUnload;
+
     status = IoRegisterPlugPlayNotification(
                 EventCategoryDeviceInterfaceChange,
                 PNPNOTIFY_DEVICE_INTERFACE_INCLUDE_EXISTING_INTERFACES,
