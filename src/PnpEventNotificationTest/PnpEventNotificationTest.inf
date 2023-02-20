@@ -1,0 +1,44 @@
+;
+; PnpEventNotificationTest.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%ManufacturerName%
+DriverVer=
+CatalogFile=PnpEventNotificationTest.cat
+PnpLockDown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+PnpEventNotificationTest.sys = 1,,
+
+[DefaultInstall.NT$ARCH$]
+CopyFiles=DefaultInstall_CopyFiles
+
+[DefaultInstall_CopyFiles]
+PnpEventNotificationTest.sys
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService = mywdmtest, 2, MyKernelTest_Service
+
+; -------------- graiddriver driver install sections
+[MyKernelTest_Service]
+DisplayName    = %MyDeviceDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\PnpEventNotificationTest.sys
+
+
+[Strings]
+ManufacturerName="Roy Wang" ;TODO: Replace with your manufacturer name
+DiskName="WDM Test Source Disk"
+MyDeviceDesc = "Test IoRegisterPlugPlayNotification in kernel"
