@@ -1,0 +1,46 @@
+;
+; DpcQueueTest.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+DriverVer=
+CatalogFile=DpcQueueTest.cat
+PnpLockDown=1
+
+;This template is supported for OS version 17763 (Windows 10 version 1809) and after.
+;For Windows OS prior to Windows 10 1809 set DefaultDestDir = 12
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+DpcQueueTest.sys = 1,,
+
+[DefaultInstall.NT$ARCH$]
+CopyFiles=DefaultInstall_CopyFiles
+
+[DefaultInstall_CopyFiles]
+DpcQueueTest.sys
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService = dpctest, 2, MyKernelTest_Service
+
+; -------------- graiddriver driver install sections
+[MyKernelTest_Service]
+DisplayName    = %MyDeviceDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\DpcQueueTest.sys
+
+[Strings]
+ManufacturerName="<Roy Wang>"
+ClassName=""
+DiskName="DpcQueueTest Source Disk"
+MyDeviceDesc="DpcQueueTest Driver"
