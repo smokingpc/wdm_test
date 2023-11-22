@@ -1,0 +1,47 @@
+;
+; BigNumaNodeTest.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+DriverVer=
+CatalogFile=BigNumaNodeTest.cat
+PnpLockDown=1
+
+;This template is supported for OS version 17763 (Windows 10 version 1809) and after.
+;For Windows OS prior to Windows 10 1809 set DefaultDestDir = 12
+[DestinationDirs]
+DefaultDestDir = 12
+
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+BigNumaNodeTest.sys = 1,,
+
+[DefaultInstall.NT$ARCH$]
+CopyFiles=DefaultInstall_CopyFiles
+
+[DefaultInstall_CopyFiles]
+BigNumaNodeTest.sys
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService = bignuma, 2, BigNuma_Service
+
+; -------------- graiddriver driver install sections
+[BigNuma_Service]
+DisplayName    = %MyDeviceDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\BigNumaNodeTest.sys
+
+[Strings]
+ManufacturerName="SmokingPC"
+ClassName=""
+DiskName="BigNumaNodeTest Source Disk"
+MyDeviceDesc = "Detect BigNuma node information in kernel"
