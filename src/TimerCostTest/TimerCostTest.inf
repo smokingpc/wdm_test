@@ -1,0 +1,48 @@
+;
+; TimerCostTest.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+DriverVer=*
+CatalogFile=TimerCostTest.cat
+PnpLockDown=1
+
+;This template is supported for OS version 17763 (Windows 10 version 1809) and after.
+;For Windows OS prior to Windows 10 1809 set DefaultDestDir = 12
+[DestinationDirs]
+DefaultDestDir = 12
+
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+TimerCostTest.sys = 1,,
+
+[DefaultInstall.NT$ARCH$]
+CopyFiles=DefaultInstall_CopyFiles
+
+[DefaultInstall_CopyFiles]
+TimerCostTest.sys
+
+[DefaultInstall.NT$ARCH$.Services]
+AddService = timercost, 2, TimerCostTestService
+
+; -------------- graiddriver driver install sections
+[TimerCostTestService]
+DisplayName    = %MyDeviceDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_MANUAL_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\TimerCostTest.sys
+
+
+[Strings]
+ManufacturerName="<Roy Wang>" ;TODO: Replace with your manufacturer name
+ClassName=""
+DiskName="TimerCostTest driver Source Disk"
+MyDeviceDesc = "Test loading cost of timer in kernel"
