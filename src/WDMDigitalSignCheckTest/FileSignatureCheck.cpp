@@ -1,14 +1,13 @@
 #include <wdm.h>
 #include <minwindef.h>
 #include "FileSignatureCheck.h"
+#include "Utils.h"
 
 //Roy Note:
 //CiXXXX APIs in ci.dll is used for kernel authenticode and driver signature verify.
 //ELAM also use it. This is only way to support digital signature checking without 
 //additional librarys in windows kernel.
 
-
-#if 0
 /**
 *  Given a file digest and signature of a file, verify the signature and provide information regarding
 *  the certificates that was used for signing (the entire certificate chain)
@@ -47,7 +46,6 @@ extern "C" __declspec(dllimport) NTSTATUS _stdcall CiCheckSignedFile(
     PPOLICY_INFO policyInfoForSigner,
     LARGE_INTEGER * signingTime,
     PPOLICY_INFO policyInfoForTimestampingAuthority);
-#endif
 
 /**
 *  Resets a PolicyInfo struct - frees the dynamically allocated buffer in PolicyInfo (certChainInfo) if not null.
@@ -57,8 +55,8 @@ extern "C" __declspec(dllimport) NTSTATUS _stdcall CiCheckSignedFile(
 *
 *  @return  the struct which was reset.
 */
-//extern "C" __declspec(dllimport) PVOID _stdcall CiFreePolicyInfo(PPOLICY_INFO policyInfo);
-extern CI_FREE_POLICY_INFO CiFreePolicyInfo;
+extern "C" __declspec(dllimport) PVOID _stdcall CiFreePolicyInfo(PPOLICY_INFO policyInfo);
+//extern CI_FREE_POLICY_INFO CiFreePolicyInfo;
 
 /**
 *  Given a file object, verify the signature and provide information regarding
@@ -92,18 +90,18 @@ extern CI_FREE_POLICY_INFO CiFreePolicyInfo;
 *           STATUS_IMAGE_CERT_REVOKED - the certificate used for signing the file is revoked
 *           STATUS_IMAGE_CERT_EXPIRED - the certificate used for signing the file has expired
 */
-//extern "C" __declspec(dllimport) NTSTATUS _stdcall CiValidateFileObject(
-//    struct _FILE_OBJECT* fileObject,
-//    int a2,
-//    int a3,
-//    PPOLICY_INFO policyInfoForSigner,
-//    PPOLICY_INFO policyInfoForTimestampingAuthority,
-//    LARGE_INTEGER * signingTime,
-//    UCHAR * digestBuffer,
-//    int* digestSize,
-//    int* digestIdentifier
-//);
-extern CI_VALIDATE_FILE_OBJECT CiValidateFileObject;
+extern "C" __declspec(dllimport) NTSTATUS _stdcall CiValidateFileObject(
+    struct _FILE_OBJECT* fileObject,
+    int a2,
+    int a3,
+    PPOLICY_INFO policyInfoForSigner,
+    PPOLICY_INFO policyInfoForTimestampingAuthority,
+    LARGE_INTEGER * signingTime,
+    UCHAR * digestBuffer,
+    int* digestSize,
+    int* digestIdentifier
+);
+//extern CI_VALIDATE_FILE_OBJECT CiValidateFileObject;
 
 void PrintCertInfo(PFILE_OBJECT imgfile)
 {
@@ -111,7 +109,7 @@ void PrintCertInfo(PFILE_OBJECT imgfile)
     POLICY_INFO time_auth_policy = { 0 };   //timestamp authority policy
     LARGE_INTEGER sign_time = { 0 };
     int digest_size = 64;                    //must be greater than 64
-    int digest_ident = 0;
+    int digest_ident = 0;       //0x8004==SHA1, 0x800C==SHA256
     UCHAR digest_buffer[64] = { 0 };          //must be greater than 64
     NTSTATUS status = CiValidateFileObject(
         imgfile,
@@ -124,23 +122,31 @@ void PrintCertInfo(PFILE_OBJECT imgfile)
         &digest_size,
         &digest_ident);
 
-    KdPrint(("[Roy] CiValidateFileObject returned 0x%08X\n", status));
+    PrintKdMsg("[Roy] CiValidateFileObject returned 0x%08X\n", status);
     if (NT_SUCCESS(status))
     {
-        KdPrint(("[Roy] verification status:0x%08X, digest algorithm:0x%X, digest size:%d\n", 
-            signer_policy.VerificationStatus, digest_ident, digest_size));
-        KdPrint(("[Roy] digest algorithm:0x%X, digest size:%d\n", 
-            digest_ident, digest_size));
-        //KdPrint(("[Roy] digest algorithm:0x%X, digest size:%d, subject=%s, issuer=%s\n",
-        //    digest_ident, digest_size, signer_policy.CertChain->PtrToCertChainMembers->SubjectName));
-        KdPrint(("[Roy] digest buffer:"));
+        PrintKdMsg("[Roy] verification status:0x%08X, digest algorithm:0x%X, digest size:%d\n",
+            signer_policy.VerificationStatus, digest_ident, digest_size);
+        PrintKdMsg("[Roy] digest algorithm:0x%X, digest size:%d\n",
+            digest_ident, digest_size);
 
-        for(int i=0; i< digest_size; i++)
+        if(nullptr!= signer_policy.CertChain)
         {
-            KdPrint(("%02X", signer_policy.CertChain->PtrToCertChainMembers->DigestBuffer[i]));
-        }
+            for(int i=0; i< signer_policy.CertChain->NumberOfCertChainMembers; i++)
+            {
+                PrintKdMsg("[Roy] Issuer=%s, SubjectName=%s\n",
+                    signer_policy.CertChain->PtrToCertChainMembers[i].IssuerName,
+                    signer_policy.CertChain->PtrToCertChainMembers[i].SubjectName);
 
-        KdPrint(("\n\n"));
+                PrintKdMsg("[Roy] digest buffer:");
+                for(int j=0; j< digest_size; j++)
+                {
+                    PrintKdMsg("%02X", signer_policy.CertChain->PtrToCertChainMembers[i].DigestBuffer[j]);
+                }
+                PrintKdMsg(("\n"));
+            }
+            PrintKdMsg(("\n"));
+        }
     }
     CiFreePolicyInfo(&signer_policy);
     CiFreePolicyInfo(&time_auth_policy);
@@ -171,7 +177,7 @@ BOOLEAN ValidateFileUsingCiValidateFileObject(PFILE_OBJECT imgfile, const BYTE d
         &digestIdentifier
     );
 
-    KdPrint(("[IrpCertCheck] CiValidateFileObject returned 0x%08X\n", status));
+    PrintKdMsg("[Roy]  CiValidateFileObject returned 0x%08X\n", status);
     if (NT_SUCCESS(status))
     {
 #if PRINT_DIGEST 

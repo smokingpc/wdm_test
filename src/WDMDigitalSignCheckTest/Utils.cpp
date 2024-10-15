@@ -19,12 +19,14 @@ NTSTATUS RefObjectByPtr(
 
 BOOLEAN LoadUndocumentKernelAPI(PVOID* fptr, PWCHAR api_name)
 {
-    UNICODE_STRING name = RTL_CONSTANT_STRING(api_name);
+    UNICODE_STRING name = {0};
+    RtlInitUnicodeString(&name, api_name);
+
     *fptr = MmGetSystemRoutineAddress(&name);
 
     if (nullptr == *fptr)
     {
-        KdPrint(("Cannot resolve %S\n", api_name));
+        PrintKdMsg("Cannot resolve API (%S) address\n", api_name);
         return FALSE;
     }
 

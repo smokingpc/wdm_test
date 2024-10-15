@@ -10,23 +10,6 @@
 extern QUERY_INFO_PROCESS ZwQueryInformationProcess;
 extern POBJECT_TYPE* PsProcessType;
 
-BOOLEAN LoadUndocumentKernelAPI1()
-{
-    if (nullptr == ZwQueryInformationProcess)
-    {
-        UNICODE_STRING name = RTL_CONSTANT_STRING(L"ZwQueryInformationProcess");
-        ZwQueryInformationProcess =
-            (QUERY_INFO_PROCESS)MmGetSystemRoutineAddress(&name);
-
-        if (nullptr == ZwQueryInformationProcess)
-        {
-            KdPrint(("Cannot resolve ZwQueryInformationProcess\n"));
-            return FALSE;
-        }
-    }
-
-    return TRUE;
-}
 NTSTATUS GetProcessName(_In_ PEPROCESS proc, _Inout_ PVOID buffer, _In_ ULONG buf_size)
 {
     NTSTATUS status = STATUS_UNSUCCESSFUL;
@@ -44,7 +27,7 @@ NTSTATUS GetProcessName(_In_ PEPROCESS proc, _Inout_ PVOID buffer, _In_ ULONG bu
 
     if (!NT_SUCCESS(status))
     {
-        KdPrint(("ObOpenObjectByPointer Failed: %08x\n", status));
+        PrintKdMsg("[Roy] ObOpenObjectByPointer Failed: %08x\n", status);
         goto end;
     }
 
@@ -59,7 +42,7 @@ NTSTATUS GetProcessName(_In_ PEPROCESS proc, _Inout_ PVOID buffer, _In_ ULONG bu
 
     if (!NT_SUCCESS(status))
     {
-        KdPrint(("failed to get process(%p) image name.\n", proc));
+        PrintKdMsg("[Roy] failed to get process(%p) image name.\n", proc);
     }
 
 end:
@@ -91,7 +74,7 @@ void ProcessNotifyCB(
     {
         PUNICODE_STRING name = (PUNICODE_STRING)buffer;
         UNREFERENCED_PARAMETER(name);
-        KdPrint(("[Roy]Launch process : %S\n", name->Buffer));
+        PrintKdMsg("[Roy] Launch process : %S\n", name->Buffer);
         PrintCertInfo(info->FileObject);
     }
 
