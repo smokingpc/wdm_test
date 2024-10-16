@@ -23,7 +23,7 @@ NTSTATUS DriverEntry(
     UNREFERENCED_PARAMETER(RegistryPath);
 
     BOOLEAN ok = FALSE;
-    DbgBreakPoint();
+//    DbgBreakPoint();
     ok = LoadUndocumentKernelAPI((PVOID*)&ZwQueryInformationProcess, L"ZwQueryInformationProcess");
     if(!ok)
     {

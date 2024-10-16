@@ -10,6 +10,14 @@
 extern QUERY_INFO_PROCESS ZwQueryInformationProcess;
 extern POBJECT_TYPE* PsProcessType;
 
+
+//digest for testing. If want to test different signature, 
+//modify this digest or you will always get failure.
+static const BYTE TestSignDigest[] =
+{
+    0X00, 0x00, 0X00, 0x00, 0X00, 0x00, 0X00, 0x00
+};
+
 NTSTATUS GetProcessName(_In_ PEPROCESS proc, _Inout_ PVOID buffer, _In_ ULONG buf_size)
 {
     NTSTATUS status = STATUS_UNSUCCESSFUL;

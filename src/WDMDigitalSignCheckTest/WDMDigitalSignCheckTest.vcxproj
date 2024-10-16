@@ -203,6 +203,9 @@
     <PreBuildEvent>
       <Command>lib /def:$(ProjectDir)ci_dll_exports\ci.def /machine:$(Platform) /out:$(ProjectDir)ci_dll_exports\ci.lib</Command>
     </PreBuildEvent>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
@@ -214,6 +217,9 @@
     <PreBuildEvent>
       <Command>lib /def:$(ProjectDir)ci_dll_exports\ci.def /machine:$(Platform) /out:$(ProjectDir)ci_dll_exports\ci.lib</Command>
     </PreBuildEvent>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
@@ -225,6 +231,9 @@
     <PreBuildEvent>
       <Command>lib /def:$(ProjectDir)ci_dll_exports\ci.def /machine:$(Platform) /out:$(ProjectDir)ci_dll_exports\ci.lib</Command>
     </PreBuildEvent>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
@@ -236,6 +245,9 @@
     <PreBuildEvent>
       <Command>lib /def:$(ProjectDir)ci_dll_exports\ci.def /machine:$(Platform) /out:$(ProjectDir)ci_dll_exports\ci.lib</Command>
     </PreBuildEvent>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Inf Include="WDMDigitalSignCheckTest.inf" />

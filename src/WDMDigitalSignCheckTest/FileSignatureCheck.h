@@ -1,10 +1,10 @@
 #pragma once
 
-#if 0
 #define SHA1_IDENTIFIER 0x8004
 #define SHA256_IDENTIFIER 0x800C
 #define IMAGE_DIRECTORY_ENTRY_SECURITY  4
 
+#if 0
 // prepare the parameters required for calling CiCheckSignedFile
 PolicyInfoGuard signerPolicyInfo;
 PolicyInfoGuard timestampingAuthorityPolicyInfo;
@@ -146,6 +146,9 @@ typedef NTSTATUS(*CI_VALIDATE_FILE_OBJECT) (
     int* digestSize,
     int* digestIdentifier);
 
-
-
 void PrintCertInfo(PFILE_OBJECT imgfile);
+BOOLEAN IsProcessFileSignatureValid(
+    PFILE_OBJECT imgfile,
+    const BYTE digest[],
+    UINT32 algorithm,
+    UINT32 digest_size);
